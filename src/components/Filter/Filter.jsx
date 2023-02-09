@@ -1,3 +1,6 @@
+import PropTypes from 'prop-types';
+import ContactForm from '../ContactForm/ContactForm';
+
 export function Filter({ value, onFilterChange }) {
   return (
     <input
@@ -9,3 +12,8 @@ export function Filter({ value, onFilterChange }) {
     />
   );
 }
+
+Filter.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+};
