@@ -2,6 +2,8 @@ import ContactForm from './ContactForm/ContactForm';
 import { Component } from 'react';
 import { Filter } from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
+import Notification from './Notification/Notification';
+import { nanoid } from 'nanoid';
 
 export class App extends Component {
   state = {
@@ -15,12 +17,13 @@ export class App extends Component {
   };
 
   addContact = data => {
-    for (let contact of this.state.contacts) {
-      if (contact.name === data.name)
-        return alert(`${data.name} is already in contacts`);
-    }
+    const duplicate = this.state.contacts.some(
+      contact => contact.name.toLowerCase() === data.name.toLowerCase()
+    );
+    if (duplicate) return alert(`${data.name} is already in contacts`);
+
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, data],
+      contacts: [...prevState.contacts, { ...data, id: nanoid() }],
     }));
   };
   deleteTodo = id => {
@@ -34,6 +37,7 @@ export class App extends Component {
   };
   handleFilter = ({ target: { value } }) => {
     this.setState({ filter: value });
+    console.log(value);
   };
 
   render() {
@@ -47,11 +51,18 @@ export class App extends Component {
         <h1>PhoneBook</h1>
         <ContactForm addContact={this.addContact} />
         <h2>Contacts</h2>
-        <Filter onFilterChange={this.handleFilter} value={filter} />
-        <ContactList
-          filteredProducts={filteredProducts}
-          deleteTodo={this.deleteTodo}
-        />
+        {contacts.length === 0 ? (
+          <Notification message="There is no contacts" />
+        ) : (
+          <div>
+            <Filter onFilterChange={this.handleFilter} value={filter} />
+
+            <ContactList
+              filteredProducts={filteredProducts}
+              deleteTodo={this.deleteTodo}
+            />
+          </div>
+        )}
       </>
     );
   }
